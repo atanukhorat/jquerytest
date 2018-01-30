@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>jQuery Test</title>
+
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+<body>
+
+<div>
+  <input type="radio" name="search" value="0" checked> Repo &nbsp;&nbsp;
+ <input type="radio" name="search" value="1"> Author<br>
+<input type="text" id="repo" placeholder="Repo name">
+<button type="button" id="button">Search</button>
+</div>
+<div id="gitDiv">
+
+</div>
+<script>
+$('#button').click(function(){
+  if($('#repo').val()!=""){
+  var str = $('#repo').val();
+str = str.replace(/\s+/g, '-').toLowerCase();
+var gitApi=($('input[name=search]:checked').val()=='0')?"https://api.github.com/search/repositories?q="+ str +"&sort=stars&order=desc":"https://api.github.com/search/users?q="+ str +"&sort=stars&order=desc";
+  $.getJSON(gitApi,{format:"json"}).done(function(data){
+    var res='Total count:'+ data.total_count;
+
+    var table=res+'<table><tr><td>ID</td><td>Html Url</td></tr>'
+    $.each( data.items, function( i, item ) {
+        table+='<tr><td>'+ item.id +'</td><td>'+item.html_url+'</td></tr>';
+        if ( i === 10 ) {
+              return false;
+            }
+    });
+    table+='</table>';
+    $('#gitDiv').html(table);
+
+  });
+}
+else{
+  alert("Please enter search term");
+}
+});
+</script>
+
+</body>
+</html>
